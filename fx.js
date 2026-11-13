@@ -5,10 +5,10 @@
   /* Fundo: rede de partículas interativa */
   const cv = $("#bg");
   if (cv && !reduce) {
-    const x = cv.getContext("2d"); let W, H, pts = [], m = { x: -999, y: -999 };
-    const size = () => { W = cv.width = innerWidth; H = cv.height = innerHeight; pts = Array.from({ length: Math.min(90, W / 14 | 0) }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .4, vy: (Math.random() - .5) * .4 })); };
+    const x = cv.getContext("2d"); let W, H, pts = [], m = { x: -999, y: -999 }; const par = cv.parentElement;
+    const size = () => { W = cv.width = par.offsetWidth; H = cv.height = par.offsetHeight; pts = Array.from({ length: Math.min(90, W / 14 | 0) }, () => ({ x: Math.random() * W, y: Math.random() * H, vx: (Math.random() - .5) * .4, vy: (Math.random() - .5) * .4 })); };
     size(); addEventListener("resize", size);
-    addEventListener("mousemove", e => { m.x = e.clientX; m.y = e.clientY; });
+    addEventListener("mousemove", e => { const r = cv.getBoundingClientRect(); m.x = e.clientX - r.left; m.y = e.clientY - r.top; });
     (function loop() {
       x.clearRect(0, 0, W, H);
       for (const p of pts) {
@@ -16,11 +16,11 @@
         if (p.x < 0 || p.x > W) p.vx *= -1; if (p.y < 0 || p.y > H) p.vy *= -1;
         const dx = p.x - m.x, dy = p.y - m.y, d = Math.hypot(dx, dy);
         if (d < 140) { p.x += dx / d * 1.2; p.y += dy / d * 1.2; }
-        x.fillStyle = "rgba(34,211,238,.7)"; x.beginPath(); x.arc(p.x, p.y, 1.6, 0, 7); x.fill();
+        x.fillStyle = "rgba(95,201,216,.8)"; x.beginPath(); x.arc(p.x, p.y, 1.6, 0, 7); x.fill();
       }
       for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) {
         const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y);
-        if (d < 130) { x.strokeStyle = `rgba(59,108,255,${.35 * (1 - d / 130)})`; x.beginPath(); x.moveTo(pts[i].x, pts[i].y); x.lineTo(pts[j].x, pts[j].y); x.stroke(); }
+        if (d < 130) { x.strokeStyle = `rgba(143,176,255,${.4 * (1 - d / 130)})`; x.beginPath(); x.moveTo(pts[i].x, pts[i].y); x.lineTo(pts[j].x, pts[j].y); x.stroke(); }
       }
       requestAnimationFrame(loop);
     })();
